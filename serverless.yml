@@ -1,0 +1,93 @@
+service: my-serverless-app
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  environment:
+    MY_USER_POOL_CLIENT_ID: "1tnksmt3v2tmglbddfg1qiqbdd"
+
+functions:
+  signUp:
+    handler: src/handler.signUp
+    events:
+      - http:
+          method: post
+          path: /sign-up
+
+  confirmSignUp:
+    handler: src/handler.confirmSignUp
+    events:
+      - http:
+          method: post
+          path: /confirm-sign-up
+  signIn:
+    handler: src/handler.signIn
+    events:
+      - http:
+          method: post
+          path: /sign-in
+
+resources:
+  Resources:
+    MyUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: my-user-pool
+        AutoVerifiedAttributes:
+          - email
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: true
+            RequireUppercase: true
+            RequireNumbers: true
+            RequireSymbols: true
+
+    MyUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        UserPoolId:
+          Ref: MyUserPool
+        ClientName: my-user-pool-client
+
+    MyUserPoolGroup:
+      Type: AWS::Cognito::UserPoolGroup
+      Properties:
+        GroupName: my-user-pool-group
+        UserPoolId:
+          Ref: MyUserPool
+
+    UserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: user-table
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    MyIAMRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: my-iam-role
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Federated: cognito-identity.amazonaws.com
+              Action:
+                - sts:AssumeRoleWithWebIdentity
+        Policies:
+          - PolicyName: my-iam-role-policy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:*
+                  Resource: "arn:aws:dynamodb:*:*:table/user-table"  
