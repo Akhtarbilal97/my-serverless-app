@@ -28,6 +28,13 @@ functions:
           method: post
           path: /sign-in
 
+  uploadFile:
+    handler: src/handler.uploadFile
+    events:
+      - http:
+          method: post
+          path: /upload-file
+
 resources:
   Resources:
     MyUserPool:
@@ -90,4 +97,4 @@ resources:
                 - Effect: Allow
                   Action:
                     - dynamodb:*
-                  Resource: "arn:aws:dynamodb:*:*:table/user-table"  
+                  Resource: "arn:aws:dynamodb:*:*:table/user-table"
