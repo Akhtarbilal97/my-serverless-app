@@ -21,6 +21,14 @@ functions:
       - http:
           method: post
           path: /confirm-sign-up
+
+  updatePassword:
+    handler: src/handler.updatePassword
+    events:
+      - http:
+          method: put
+          path: /updatePassword
+
   signIn:
     handler: src/handler.signIn
     events:
@@ -34,6 +42,12 @@ functions:
       - http:
           method: post
           path: /upload-file
+  SearchService:
+    handler: src/handler.SearchService
+    events:
+      - http:
+          method: GET
+          path: /search-service
 
 resources:
   Resources:
@@ -76,6 +90,20 @@ resources:
           - AttributeName: email
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+
+    assetsTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        TableName: "assets-table"
 
     MyIAMRole:
       Type: AWS::IAM::Role
