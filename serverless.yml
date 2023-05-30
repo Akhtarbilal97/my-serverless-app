@@ -42,6 +42,62 @@ functions:
       - http:
           method: post
           path: /upload-file
+
+  getFile:
+    handler: src/handler.getFile
+    events:
+      - http:
+          method: GET
+          path: /getFile
+
+  updateFile:
+    handler: src/handler.updateFile
+    events:
+      - http:
+          method: PUT
+          path: /updateFile
+  
+  deleteFile:
+    handler: src/handler.deleteFile
+    events:
+      - http:
+          method: DELETE
+          path: /deleteFile
+
+  # Category:
+  #   handler: src/handler.Category
+  #   events:
+  #     - http:
+  #         method: GET
+  #         path: /Category
+  # createCategory:
+  #   handler: src/handler.createCategory
+  #   events:
+  #     - http:
+  #         method: post
+  #         path: /createCategory
+
+  getCategory:
+    handler: src/handler.getCategory
+    events:
+      - http:
+          method: GET
+          path: /getCategory
+
+  # createTools:
+  #   handler: src/handler.createTools
+  #   events:
+  #     - http:
+  #         method: post
+  #         path: /createTools
+
+  getTools:
+    handler: src/handler.getTools
+    events:
+      - http:
+          method: GET
+          path: /getTools
+
   SearchService:
     handler: src/handler.SearchService
     events:
@@ -104,6 +160,34 @@ resources:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
         TableName: "assets-table"
+
+    NewCategoryTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: new-category-table
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+    NewToolsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: new-tools-table
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
 
     MyIAMRole:
       Type: AWS::IAM::Role
